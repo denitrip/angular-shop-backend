@@ -1,6 +1,6 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { middyfy } from '@libs/lambda';
-import { productList } from 'src/constants';
+import { middyfy } from '../../libs/lambda';
+import { productList } from '../../constants';
 
 
 const getProductsList: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
