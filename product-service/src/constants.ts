@@ -16,7 +16,7 @@ export const productList = [{
     count: 3,
     description: 'Something you would like to buy but your parents wont let you.',
     id: '3',
-    price: 3890,
+    price: 389,
     title: 'Lego star wars for 30 years old kids'
   },
   {
@@ -30,7 +30,7 @@ export const productList = [{
     count: 15,
     description: 'Something that senior developers can drink after the schift',
     id: '5',
-    price: 1050,
+    price: 105,
     title: 'Expensive beer'
   },
   {
