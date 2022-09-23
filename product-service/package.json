@@ -5,7 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "jest",
-    "db:create-mock-json": "ts-node ./db/scripts/createMocks.ts",
+    "db:create-mocks-json": "ts-node ./db/scripts/createMocks.ts",
     "db:upload-products-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/productsMock.json",
     "db:upload-stocks-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/stocksMock.json",
     "db:create-mocks:upload": "npm run db:create-mock-json && npm run db:upload-products-mock-data && npm run db:upload-stocks-mock-data"
