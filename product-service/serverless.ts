@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductsById } from '@functions/index';
+import { getProductsList, getProductsById, createProduct } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
   service: 'product-service-test',
@@ -18,9 +18,29 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      PRODUCTS_TABLE: 'products',
+      STOCKS_TABLE: 'stocks'
     },
+    iamRoleStatements: [
+      {
+        Effect: 'Allow',
+        Action: [
+            'dynamodb:DescribeTable',
+            'dynamodb:Query',
+            'dynamodb:Scan',
+            'dynamodb:GetItem',
+            'dynamodb:PutItem',
+            'dynamodb:UpdateItem',
+            'dynamodb:DeleteItem'
+        ],
+        Resource: [
+          {"Fn::GetAtt": [ 'products', 'Arn' ]},
+          {"Fn::GetAtt": [ 'stocks', 'Arn' ]}
+        ]
+      }
+    ]
   },
-  functions: { getProductsList, getProductsById  },
+  functions: { getProductsList, getProductsById, createProduct },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -42,7 +62,7 @@ const serverlessConfiguration: AWS = {
             Type: 'AWS::DynamoDB::Table',
             DeletionPolicy: 'Retain',
             Properties: {
-                TableName: 'products',
+                TableName: '${self:provider.environment.PRODUCTS_TABLE}',
                 AttributeDefinitions: [
                     { AttributeName: 'id', AttributeType: 'N' },
                     { AttributeName: 'title', AttributeType: 'S' }
@@ -61,7 +81,7 @@ const serverlessConfiguration: AWS = {
             Type: 'AWS::DynamoDB::Table',
             DeletionPolicy: 'Retain',
             Properties: {
-                TableName: 'stocks',
+                TableName: '${self:provider.environment.STOCKS_TABLE}',
                 AttributeDefinitions: [
                     { AttributeName: 'product_id', AttributeType: 'N' },
                 ],
