@@ -4,7 +4,8 @@
   "description": "Serverless aws-nodejs-typescript template",
   "main": "serverless.ts",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "swagger": "swagger project edit"
   },
   "engines": {
     "node": ">=14.15.0"

@@ -19,9 +19,9 @@ paths:
       responses:
         '200':
           description: Array of existing products with prices
-  /products/{productId}:
+  /products/{id}:
     get:
-      description: Returns single product based on productID. CORS sensitive, not available from localhost
+      description: Returns single product based on productID
       produces:
       - application/json
       responses:
