@@ -1,10 +1,12 @@
 import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
 import { middyfy } from '../../libs/lambda';
 import type {ProductDB, StockDB, Product} from '../../types'
+import ResponseModel from '../../../db/models/response.model';
 
 import DatabaseService from "../../../db/services/database.service";
 
 const getProductsList: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
+  try {
   const dbService = new DatabaseService();
   
   const { PRODUCTS_TABLE, STOCKS_TABLE } = process.env;
@@ -33,6 +35,9 @@ const getProductsList: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
     },
     body: JSON.stringify(result)
   }
+} catch (e) {
+  return new ResponseModel({}, 500, `Internal server error`).generate();
+}
 };
 
 export const main = middyfy(getProductsList);
