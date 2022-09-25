@@ -5,6 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "jest",
+    "swagger": "swagger project edit",
     "db:create-mocks-json": "ts-node ./db/scripts/createMocks.ts",
     "db:upload-products-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/productsMock.json",
     "db:upload-stocks-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/stocksMock.json",

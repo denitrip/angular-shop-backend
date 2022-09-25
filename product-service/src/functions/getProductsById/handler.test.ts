@@ -12,14 +12,14 @@ jest.mock('../../libs/lambda', () => {
 
 describe('getProductsById', () => {
   test('getProductsById should return result if such product exist in array', async () => {
-    const result = await main({pathParameters: {productId: '1'}} as any, {} as any, {} as any);
+    const result = await main({pathParameters: {id: '1'}} as any, {} as any, {} as any);
     const expectedResult = productList[0];
 
-    expect(JSON.parse(result.body).product).toStrictEqual(expectedResult);
+    expect(JSON.parse(result.body)).toStrictEqual(expectedResult);
   });
 
   test('should throw error NO PRODUCT FOUND if product does not exist in array', async () => {
-    await expect(main({pathParameters: {productId: 'wrongID'}} as any, {} as any, {} as any)).rejects.toThrow('Product not found');
+    await expect(main({pathParameters: {id: 'wrongID'}} as any, {} as any, {} as any)).rejects.toThrow('Product not found');
   });
 
   test('should throw error MISSING PRODUCT ID when product is was not provided as a param', async () => {
