@@ -31,6 +31,10 @@ type DeleteItemOutput = AWS.DynamoDB.DocumentClient.DeleteItemOutput;
 type ScanItems = AWS.DynamoDB.DocumentClient.ScanInput;
 type ScanItemsOutput = AWS.DynamoDB.DocumentClient.ScanOutput;
 
+// transaction write
+type TransactWriteItem= AWS.DynamoDB.DocumentClient.TransactWriteItemsInput;
+type TransactWriteItemsOutput = AWS.DynamoDB.DocumentClient.TransactWriteItemsOutput;
+
 AWS.config.update({ region: "eu-west-1" });
 
 const documentClient = new AWS.DynamoDB.DocumentClient();
@@ -90,6 +94,14 @@ export default class DatabaseService {
             return await documentClient.scan(params).promise();
         } catch (error) {
             throw new ResponseModel({}, 500, `scan-error: ${error?.errorMessage}`);
+        }
+    }
+
+    transactiWrite = async (params: TransactWriteItem): Promise<TransactWriteItemsOutput> => {
+        try {
+            return await documentClient.transactWrite(params).promise();
+        } catch (error) {
+            throw new ResponseModel({}, 500, `transact-write-error: ${error?.errorMessage}`);
         }
     }
 }
