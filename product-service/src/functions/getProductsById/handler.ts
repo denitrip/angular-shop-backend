@@ -36,7 +36,7 @@ const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async
     console.log('LOG: result object: ', product);
   
     if (!product) {
-      throw new Error("Product not found");
+      return new ResponseModel({}, 400, "Product not found").generate();
     }
   
     return {
