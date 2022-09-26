@@ -8,13 +8,13 @@ import schema from './schema';
 
 const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   try {
+    console.log('LOG: event object: ', event);
+    console.log('LOG: payload = ', event.pathParameters);
     const dbService = new DatabaseService();
   
     const { PRODUCTS_TABLE, STOCKS_TABLE } = process.env;
-    console.log('LOG: event: ', event.pathParameters);
   
     const productId = Number(event?.pathParameters.id);
-    console.log('LOG: productID = ',productId);
   
     if (!productId) {
       throw new Error("ProductID is missing");

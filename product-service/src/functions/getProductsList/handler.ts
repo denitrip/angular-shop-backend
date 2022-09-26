@@ -5,8 +5,9 @@ import ResponseModel from '../../../db/models/response.model';
 
 import DatabaseService from "../../../db/services/database.service";
 
-const getProductsList: ValidatedEventAPIGatewayProxyEvent<any> = async () => {
+const getProductsList: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
   try {
+  console.log('LOG: event object: ', event);
   const dbService = new DatabaseService();
   
   const { PRODUCTS_TABLE, STOCKS_TABLE } = process.env;

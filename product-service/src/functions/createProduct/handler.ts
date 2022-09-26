@@ -9,6 +9,7 @@ import schema from './schema'
 
 const createProduct: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (event) => {
   try {
+    console.log('LOG: event object: ', event);
     console.log('LOG: payload = ', event.body);
     const payload = {price: event.body.price, title: event.body.title, description: event.body.description, count: event.body.count, id: Number(event.body.id)}
 
