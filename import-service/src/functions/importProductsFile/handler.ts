@@ -3,45 +3,31 @@ import { middyfy } from '@libs/lambda';
 import * as AWS from 'aws-sdk';
 
 const importProductsFile: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
-    const S3 = new AWS.S3({region: 'eu-west-1'})
-    const BUCKET_NAME = 'import-service-dev-serverlessdeploymentbucket-cjzgizseur0m';
-    const prefix = 'uploaded/';
-    const fileName = event.queryStringParameters.fileName;
+    const S3 = new AWS.S3({region: 'eu-west-1', signatureVersion: 'v4' })
+    const fileName = event.queryStringParameters.name;
     console.log('LOG: file name: ', fileName);
 
-    const S3params = {
-      Bucket: BUCKET_NAME,
-      Prefix: prefix
+    const signedUrlParams = {
+      Bucket: 'import-service-dev-serverlessdeploymentbucket-cjzgizseur0m',
+      Key: `uploaded/${fileName}`
     }
 
     try {
-      const s3response = await S3.listObjectsV2(S3params).promise()
-      const objectsList = s3response.Contents;
-      console.log('LOG: objects list: ', objectsList)
-      const object = objectsList.filter(object => object.Size).find(object => object.Key.includes(fileName))
+      const signedUrl = S3.getSignedUrl('putObject', signedUrlParams)
 
-      if(!object) {
-        return {
-          statusCode: 400,
-          body: 'no such onject found in S3'
-        }
-      }
-
-      console.log('LOG: object in S3: ', object);
       return {
         statusCode: 200,
         headers: {
           'access-control-allow-origin': '*'
         },
-        body: `https://${BUCKET_NAME}.s3.amazonaws.com/${object.Key}`
+        body: JSON.stringify({url: `${signedUrl}`})
       }
     } catch(e) {
       return {
         statusCode: 500,
-        body: JSON.stringify(e)
+        body: JSON.stringify('Something went wrong')
       }
     }
-
 };
 
 export const main = middyfy(importProductsFile);

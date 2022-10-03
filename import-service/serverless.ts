@@ -24,7 +24,7 @@ const serverlessConfiguration: AWS = {
       {
         Effect: 'Allow',
         Action: [
-          "s3:*"
+          "s3:ListBucket"
         ],
         Resource: [
           "arn:aws:s3:::${self:provider.environment.BUCKET_NAME}",

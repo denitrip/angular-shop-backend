@@ -10,7 +10,7 @@ export default {
         request: {
           parameters: {
             querystrings: {
-              fileName: true
+              name: true
             }
           }
         }
