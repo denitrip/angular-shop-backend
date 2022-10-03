@@ -1,6 +1,6 @@
 import type { AWS } from '@serverless/typescript';
 
-import { importProductsFile } from './src/functions/';
+import { importProductsFile, importFileParser } from './src/functions/';
 
 const serverlessConfiguration: AWS = {
   service: 'import-service',
@@ -18,7 +18,7 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      BUCKET_NAME: 'import-service-dev-serverlessdeploymentbucket-cjzgizseur0m'
+      BUCKET_NAME: 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva'
     },
     iamRoleStatements: [
       {
@@ -33,7 +33,7 @@ const serverlessConfiguration: AWS = {
       }
     ]
   },
-  functions: { importProductsFile },
+  functions: { importProductsFile, importFileParser },
   package: { individually: true },
   custom: {
     esbuild: {

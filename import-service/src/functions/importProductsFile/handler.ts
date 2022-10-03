@@ -1,5 +1,5 @@
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { middyfy } from '@libs/lambda';
+import type { ValidatedEventAPIGatewayProxyEvent } from '../../libs/api-gateway';
+import { middyfy } from '../../libs/lambda';
 import * as AWS from 'aws-sdk';
 
 const importProductsFile: ValidatedEventAPIGatewayProxyEvent<any> = async (event) => {
@@ -8,7 +8,7 @@ const importProductsFile: ValidatedEventAPIGatewayProxyEvent<any> = async (event
     console.log('LOG: file name: ', fileName);
 
     const signedUrlParams = {
-      Bucket: 'import-service-dev-serverlessdeploymentbucket-cjzgizseur0m',
+      Bucket: 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva',
       Key: `uploaded/${fileName}`
     }
 
