@@ -9,7 +9,7 @@ jest.mock('../../libs/lambda', () => {
   };
 })
 
-AWSMock.mock('S3', 'getSignedUrl', 'mock url');
+AWSMock.mock('S3', 'getSignedUrl', 'url');
 
 describe('importProductsFile', () => {
     test('should console log file name', async () => {
