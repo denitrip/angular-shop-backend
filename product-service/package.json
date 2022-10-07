@@ -5,7 +5,11 @@
   "main": "serverless.ts",
   "scripts": {
     "test": "jest",
-    "swagger": "swagger project edit"
+    "swagger": "swagger project edit",
+    "db:create-mocks-json": "ts-node ./db/scripts/createMocks.ts",
+    "db:upload-products-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/productsMock.json",
+    "db:upload-stocks-mock-data": "aws dynamodb batch-write-item --request-items file://./db/mocks/stocksMock.json",
+    "db:create-mocks:upload": "npm run db:create-mock-json && npm run db:upload-products-mock-data && npm run db:upload-stocks-mock-data"
   },
   "engines": {
     "node": ">=14.15.0"
@@ -18,10 +22,11 @@
     "@serverless/typescript": "^3.0.0",
     "@types/aws-lambda": "^8.10.71",
     "@types/jest": "^29.0.3",
-    "@types/node": "^14.14.25",
+    "@types/node": "^14.18.29",
     "esbuild": "^0.14.11",
     "jest": "^29.0.3",
     "json-schema-to-ts": "^1.5.0",
+    "payload-validator": "^1.0.4",
     "serverless": "^3.0.0",
     "serverless-esbuild": "^1.23.3",
     "ts-jest": "^29.0.1",

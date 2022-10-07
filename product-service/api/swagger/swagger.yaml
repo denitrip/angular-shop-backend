@@ -19,6 +19,38 @@ paths:
       responses:
         '200':
           description: Array of existing products with prices
+    post:
+      description: Returns single product based on productID(CORS sensitive, not available from localhost)
+      consumes:
+        - application/json
+      parameters:
+        - in: body
+          name: user
+          description: API to create product.
+          schema:
+            type: object
+            required:
+              - id
+              - description
+              - title
+              - price
+              - count
+            properties:
+              id:
+                type: string
+              description:
+                type: string
+              title:
+                type: string
+              price:
+                type: string
+              count:
+                type: string      
+      produces:
+      - application/json
+      responses:
+        '200':
+          description: Single product from the database.         
   /products/{id}:
     get:
       description: Returns single product based on productID
@@ -30,8 +62,9 @@ paths:
         default:
           description: Unexpected error if productID is missing or was not provided
     parameters:
-      - name: productId
+      - name: id
         in: path
         description: ID of the product
         required: true
-        type: string             
+        type: string      
+              
