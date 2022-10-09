@@ -103,9 +103,25 @@ const serverlessConfiguration: AWS = {
               Protocol: 'email',
               TopicArn: {
                 Ref: 'SNSTopic'
+              },
+              FilterPolicy: {
+                messageEvent: ["cheap_product"],
               }
             }
-        }, 
+        },
+        VipSNSSubscription: {
+          Type: 'AWS::SNS::Subscription',
+          Properties: {
+            Endpoint: 'dzianis.aws.test@gmail.com',
+            Protocol: 'email',
+            TopicArn: {
+              Ref: 'SNSTopic'
+            },
+            FilterPolicy: {
+              messageEvent: ["vip_product"],
+            }
+          }
+      },  
         products: {
             Type: 'AWS::DynamoDB::Table',
             DeletionPolicy: 'Retain',

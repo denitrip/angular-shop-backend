@@ -12,6 +12,7 @@ const catalogBatchProcess = async (event) => {
 
   for await (const record of event?.Records) {
     const payLoad = JSON.parse(record.body);
+    const isVipProduct = Number(payLoad.price) > 200;
 
     console.log('LOG: product payload: ',payLoad)
 
@@ -20,21 +21,27 @@ const catalogBatchProcess = async (event) => {
     try {
       await dbService.transactiWrite(transactPayload);
       console.log('LOG: item has beed added to database: ',payLoad.title)
+
+      await SNS.publish({
+        Subject: 'New items in your database',
+        Message: `A new product has been added to your database: ${JSON.stringify(transactPayload)}`,
+        TopicArn: process.env.SNS_ARN,
+        MessageAttributes: {
+          messageEvent: {
+            DataType: 'String',
+            StringValue: isVipProduct ? 'vip_product' : 'cheap_product'
+         }
+        }
+      }, (err, data) => {
+        if(err) console.log(err);
+        else {
+          console.log('LOG: email notification has been sent')
+        }
+      }).promise()
     } catch(e) {
       console.log('Transact error, items were not added into the table: ',payLoad.title);
     }  
   }
-
-  await SNS.publish({
-    Subject: 'New items in your database',
-    Message: `A couple of new products were added to your database: ${event?.Records.map(record => record.body)}`,
-    TopicArn: process.env.SNS_ARN
-  }, (err, data) => {
-    if(err) console.log(err);
-    else {
-      console.log('LOG: email notification has been sent')
-    }
-  }).promise()
 };
 
 export const main = middyfy(catalogBatchProcess);
