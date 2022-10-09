@@ -1,9 +1,9 @@
 import type { AWS } from '@serverless/typescript';
 
-import { getProductsList, getProductsById, createProduct } from '@functions/index';
+import { getProductsList, getProductsById, createProduct, catalogBatchProcess } from '@functions/index';
 
 const serverlessConfiguration: AWS = {
-  service: 'product-service-test',
+  service: 'product-service',
   frameworkVersion: '3',
   plugins: ['serverless-esbuild'],
   provider: {
@@ -19,7 +19,15 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       PRODUCTS_TABLE: 'products',
-      STOCKS_TABLE: 'stocks'
+      STOCKS_TABLE: 'stocks',
+      SQS_QUEUE_NAME: 'catalogItemsQueue',
+      SNS_TOPIC_NAME: 'createProductTopic',
+      SQS_URL: {
+        Ref: 'SQSQueue'
+      },
+      SNS_ARN: {
+        Ref: 'SNSTopic'
+      }
     },
     iamRoleStatements: [
       {
@@ -31,16 +39,34 @@ const serverlessConfiguration: AWS = {
             'dynamodb:GetItem',
             'dynamodb:PutItem',
             'dynamodb:UpdateItem',
-            'dynamodb:DeleteItem'
+            'dynamodb:DeleteItem',
         ],
         Resource: [
           {"Fn::GetAtt": [ 'products', 'Arn' ]},
           {"Fn::GetAtt": [ 'stocks', 'Arn' ]}
         ]
+      },
+      {
+        Effect: 'Allow',
+        Action: [
+            "sqs:*"
+        ],
+        Resource: [
+          {"Fn::GetAtt": [ 'SQSQueue', 'Arn' ]}
+        ]
+      },
+      {
+        Effect: 'Allow',
+        Action: [
+            "sns:*"
+        ],
+        Resource: {
+          Ref: 'SNSTopic'
+        }
       }
     ]
   },
-  functions: { getProductsList, getProductsById, createProduct },
+  functions: { getProductsList, getProductsById, createProduct, catalogBatchProcess },
   package: { individually: true },
   custom: {
     esbuild: {
@@ -58,6 +84,28 @@ const serverlessConfiguration: AWS = {
   },
   resources: {
     Resources: {
+        SQSQueue: {
+            Type: 'AWS::SQS::Queue',
+            Properties: {
+              QueueName: '${self:provider.environment.SQS_QUEUE_NAME}'
+            }
+        },
+        SNSTopic: {
+            Type: 'AWS::SNS::Topic',
+            Properties: {
+              TopicName: '${self:provider.environment.SNS_TOPIC_NAME}'
+            }
+        },
+        SNSSubscription: {
+            Type: 'AWS::SNS::Subscription',
+            Properties: {
+              Endpoint: 'dzianis.puchko@gmail.com',
+              Protocol: 'email',
+              TopicArn: {
+                Ref: 'SNSTopic'
+              }
+            }
+        }, 
         products: {
             Type: 'AWS::DynamoDB::Table',
             DeletionPolicy: 'Retain',

@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import { importProductsFile, importFileParser } from './src/functions/';
 
+// TODO: rename to import-service
+    // TODO: rename BUCKET_NAME: 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva',
 const serverlessConfiguration: AWS = {
   service: 'import-service',
   frameworkVersion: '3',
@@ -18,7 +20,7 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
-      BUCKET_NAME: 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva'
+      BUCKET_NAME: 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva',
     },
     iamRoleStatements: [
       {
@@ -29,6 +31,15 @@ const serverlessConfiguration: AWS = {
         Resource: [
           "arn:aws:s3:::${self:provider.environment.BUCKET_NAME}",
           "arn:aws:s3:::${self:provider.environment.BUCKET_NAME}/*"
+        ]
+      },
+      {
+        Effect: 'Allow',
+        Action: [
+            "sqs:*"
+        ],
+        Resource: [
+          "arn:aws:sqs:eu-west-1:977382083391:catalogItemsQueue"
         ]
       }
     ]
