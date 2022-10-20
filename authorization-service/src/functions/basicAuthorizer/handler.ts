@@ -1,12 +1,20 @@
 const basicAuthorizer: any =  async (event, context, callback) => {
     if (event['type'] != 'TOKEN') {
-        callback('Unautorized')
+        console.log('LOG: type is not TOKEN');
+        callback("Unauthorized")
     }
 
     try {
         const authToken = event.authorizationToken;
 
         const encodedCreds = authToken.split(' ')[1];
+        const isAuthTokenMissing = encodedCreds === 'null';
+
+        if (isAuthTokenMissing) {
+            callback("Unauthorized")
+            return;
+        }
+
         const buff = Buffer.from(encodedCreds, 'base64');
         const plainCreds = buff.toString('utf-8').split(':');
 
@@ -20,11 +28,13 @@ const basicAuthorizer: any =  async (event, context, callback) => {
         callback(null, policy);
 
     } catch(e) {
-        callback('Unautorized: ', JSON.stringify(e.message))
+        console.log('LOG: catch works');
+        callback('Unauthorized: ', JSON.stringify(e.message))
     }
 }
 
 const generatePolicy = (principalId, resource, effect = 'Allow') => {
+
     return ({
         principalId: principalId,
         policyDocument: {
