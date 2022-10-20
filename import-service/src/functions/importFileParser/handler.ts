@@ -2,7 +2,16 @@ import { middyfy } from '@libs/lambda';
 import * as AWS from 'aws-sdk';
 const csv = require('csv-parser');
 const S3 = new AWS.S3({region: 'eu-west-1', signatureVersion: 'v4' });
+const SQS = new AWS.SQS();
 const BUCKET_NAME = 'import-service-dev-serverlessdeploymentbucket-y8r9nxmq8wva';
+const SQS_QUEUE_URL = 'https://sqs.eu-west-1.amazonaws.com/977382083391/catalogItemsQueue';
+
+//TODO: remove it with normal ID generation
+const getRandomId = () => {
+    const min = 500;
+    const max = 100000;
+    return Math.floor(Math.random() * (max - min) + min); 
+}
 
 const importFileParser: any =  async (event) => {
   const promises = event.Records.map((record) => {
@@ -14,7 +23,20 @@ const importFileParser: any =  async (event) => {
       file
       .pipe(csv())
       .on('data', (data) => {
-          console.log('LOG: data row: ',data);
+          const payLoad = JSON.stringify({
+            id: getRandomId(),
+            price: data.price,
+            title: data.title,
+            count: data.count,
+            description: data.description
+          })
+
+          SQS.sendMessage({QueueUrl: SQS_QUEUE_URL, MessageBody: payLoad}, (err, data) => {
+            if (err) console.log(err);
+            else {
+              console.log('LOG: data has been sent')
+            }
+          })
       })
       .on('end', async () => {
         console.log('LOG: copying the file: ', record.s3.object.key);
